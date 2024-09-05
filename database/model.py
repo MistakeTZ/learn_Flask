@@ -1,12 +1,16 @@
 import psycopg2
-from psycopg2.extensions import connection
+from psycopg2.extensions import connection, cursor
 from os import getenv
+
+conn: connection
+cur: cursor
 
 
 class DB():
-    conn: connection
+    
+    def load_database(dbname = "", user = "", password = "", host = "", port=0):
+        global conn, cur
 
-    def load_database(self, dbname = "", user = "", password = "", host = "", port=0):
         if not dbname:
             dbname = getenv("dbname")
         if not user:
@@ -18,5 +22,30 @@ class DB():
         if not port:
             port = getenv("dbport")
 
-        self.conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()
+
+        try:
+            cur.execute("SELECT version()")
+            print(cur.fetchone()[0])
+        except:
+            raise ValueError("Connection to database failed")
+
+
+    def create_table():
+        cur.execute("""CREATE TABLE IF NOT EXISTS users (
+                         id INT PRIMARY KEY,
+                         name VARCHAR(255),
+                         value BOOL DEFAULT false
+                         )""")
+        conn.commit()
+
+
+    def select(by_value, field="id", table="users"):
+        cur.execute("SELECT * FROM {} WHERE {} = %s".format(table, field), [by_value])
+        return cur.fetchone()
+
+
+    def unload_database():
+        conn.close()
 
