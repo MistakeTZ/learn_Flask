@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Users</h1>
+        
+        <table border="1px">
+            <tr>
+                <td>Name</td>
+                <td>ID</td>
+                <td>Value</td>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.user_id }}</td>
+                <td>{{ user.value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
