@@ -9,9 +9,11 @@ def main():
 
     # Загрузка базы данных
     DB.load_database()
-    # DB.create_table()
+    DB.create_table()
 
-    print(DB.select(1))
+    # DB.commit("INSERT INTO users (name, value) VALUES (%s, %s)", ["Alex", False])
+    # print(DB.get("SELECT * FROM users"))
+    # print(DB.select(1))
 
     # Выгрузка базы данных
     DB.unload_database()

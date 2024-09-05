@@ -22,19 +22,22 @@ class DB():
         if not port:
             port = getenv("dbport")
 
-        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        try:
+            conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        except Exception as e:
+            raise ValueError("Cannot connect to database.\nException:\n{}".format(e))
         cur = conn.cursor()
 
         try:
             cur.execute("SELECT version()")
-            print(cur.fetchone()[0])
+            print(" ".join(cur.fetchone()[0].split()[:2]), "connected")
         except:
             raise ValueError("Connection to database failed")
 
 
     def create_table():
         cur.execute("""CREATE TABLE IF NOT EXISTS users (
-                         id INT PRIMARY KEY,
+                         id serial PRIMARY KEY,
                          name VARCHAR(255),
                          value BOOL DEFAULT false
                          )""")
@@ -42,8 +45,20 @@ class DB():
 
 
     def select(by_value, field="id", table="users"):
-        cur.execute("SELECT * FROM {} WHERE {} = %s".format(table, field), [by_value])
-        return cur.fetchone()
+        return DB.get("SELECT * FROM {} WHERE {} = %s".format(table, field), [by_value], True)
+    
+
+    def get(prompt, values=None, one=False):
+        cur.execute(prompt, values)
+        if one:
+            return cur.fetchone()
+        else:
+            return cur.fetchall()
+        
+
+    def commit(prompt, values=None):
+        cur.execute(prompt, values)
+        conn.commit()
 
 
     def unload_database():
