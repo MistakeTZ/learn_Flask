@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from os import getenv
 from database.model import DB
+from app import run_server
 
 
 def main():
@@ -14,6 +15,9 @@ def main():
     # DB.commit("INSERT INTO users (name, value) VALUES (%s, %s)", ["Alex", False])
     # print(DB.get("SELECT * FROM users"))
     # print(DB.select(1))
+
+    # Запуск сервера
+    run_server()
 
     # Выгрузка базы данных
     DB.unload_database()
