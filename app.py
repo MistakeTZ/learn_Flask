@@ -1,5 +1,6 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, flash, redirect
 from database.model import DB
+from os import getenv
 
 app = Flask(__name__)
 
@@ -38,19 +39,23 @@ def add_user():
     value = request.form["value"] if "value" in request.form else False
 
     DB.commit("insert into users (name, value) values (%s, %s)", [name, value])
+    flash(f"Пользователь {name} добавлен")
 
-    all_users = DB.get("select * from users")
-    users = [{"name": user[1], "user_id": user[0], "value": user[2]} for user in all_users]
-    return render_template('users.html', users=users)
+    return redirect(url_for("get_users"))
 
 
 @app.route('/delete_user/<int:user_id>', methods=["POST"])
 def delete_user(user_id):
+    user = DB.select(user_id)
+    if not user:
+        flash(f"Пользователь не найден")
+        return redirect(url_for("get_users"))
+    
     DB.commit("delete from users where id=%s", [user_id])
 
-    all_users = DB.get("select * from users")
-    users = [{"name": user[1], "user_id": user[0], "value": user[2]} for user in all_users]
-    return render_template('users.html', users=users)
+    flash(f"Пользователь {user[1]} добавлен")
+
+    return redirect(url_for("get_users"))
 
 
 @app.route('/user/<int:user_id>/')
@@ -71,5 +76,6 @@ def change_user_name(user_id, name):
     
     
 def run_server(host = "0.0.0.0", port = 5000):
+    app.secret_key = getenv("app_secret_key")
     app.debug = True
     app.run(host=host, port=port)
