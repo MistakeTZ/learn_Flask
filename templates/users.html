@@ -9,6 +9,7 @@
                 <td>ID</td>
                 <td>Value</td>
                 <td>Link</td>
+                <td>Delete user</td>
             </tr>
             {% for user in users %}
             <tr>
@@ -16,8 +17,17 @@
                 <td>{{ user.user_id }}</td>
                 <td>{{ user.value }}</td>
                 <td><a href={{ url_for('get_user', user_id=user.user_id) }}>ссылка</a></td>
+                <td>
+                    <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="post">
+                        <input type="submit" value="удалить"/>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
+        <form action="{{ url_for('new_user') }}">
+            <input type="submit" value="Добавить пользователя" />
+        </form>
+        
     </body>
 </html>

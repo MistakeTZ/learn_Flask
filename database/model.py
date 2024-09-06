@@ -52,24 +52,37 @@ class DB():
     
 
     def get(prompt, values=None, one=False):
-        cur.execute(prompt, values)
-        if one:
-            return cur.fetchone()
-        else:
-            return cur.fetchall()
+        try:
+            cur.execute(prompt, values)
+            if one:
+                return cur.fetchone()
+            else:
+                return cur.fetchall()
+        except Exception as e:
+            print(e)
+            return False
         
 
     def get_dict(prompt, values=None, one=False):
-        dict_cur.execute(prompt, values)
-        if one:
-            return dict(dict_cur.fetchone())
-        else:
-            return [dict(res) for res in dict_cur.fetchall()]
+        try:
+            dict_cur.execute(prompt, values)
+            if one:
+                return dict(dict_cur.fetchone())
+            else:
+                return [dict(res) for res in dict_cur.fetchall()]
+        except Exception as e:
+            print(e)
+            return False
         
 
     def commit(prompt, values=None):
-        cur.execute(prompt, values)
-        conn.commit()
+        try:
+            cur.execute(prompt, values)
+            conn.commit()
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
 
     def unload_database():
