@@ -1,19 +1,22 @@
-from flask import Flask, render_template, url_for, request, flash, redirect
+from flask import Flask, render_template, url_for, request, flash, redirect, jsonify
 from database.model import DB
 from os import getenv
 
 app = Flask(__name__)
 
+# Default page
 @app.route('/')
 def index():
     return "index"
 
 
+# Hello page
 @app.route('/hello')
 def hello_world():
     return "Hello, world!"
 
 
+# Display table of all users
 @app.route('/users')
 def get_users():
     all_users = DB.get("select * from users")
@@ -21,11 +24,20 @@ def get_users():
     return render_template('users.html', users=users)
 
 
+# Send json data of all users
+@app.route('/users/JSON')
+def get_users_JSON():
+    all_users = DB.get_dict("select * from users")
+    return jsonify(all_users)
+
+
+# Render new_user template
 @app.route('/new_user')
 def new_user():
     return render_template('new_user.html')
 
 
+# Add new user
 @app.route('/add_user', methods=["POST"])
 def add_user():
     form = request.form
@@ -44,6 +56,7 @@ def add_user():
     return redirect(url_for("get_users"))
 
 
+# Delete user
 @app.route('/delete_user/<int:user_id>', methods=["POST"])
 def delete_user(user_id):
     user = DB.select(user_id)
@@ -58,6 +71,7 @@ def delete_user(user_id):
     return redirect(url_for("get_users"))
 
 
+# Render template with information about user
 @app.route('/user/<int:user_id>/')
 def get_user(user_id):
     user = DB.select(user_id)
@@ -66,6 +80,7 @@ def get_user(user_id):
     return f"User {user_id} not found"
 
 
+# Change user name with GET request
 @app.route('/user/change_name/<int:user_id>/<name>')
 def change_user_name(user_id, name):
     user = DB.select(user_id)
@@ -75,6 +90,7 @@ def change_user_name(user_id, name):
     return f"User {user_id} not found"
     
     
+# Run server
 def run_server(host = "0.0.0.0", port = 5000):
     app.secret_key = getenv("app_secret_key")
     app.debug = True

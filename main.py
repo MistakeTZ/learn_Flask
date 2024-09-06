@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from os import getenv
 from database.model import DB
-from app import run_server
+from users_app import run_server
 
 
 def main():
