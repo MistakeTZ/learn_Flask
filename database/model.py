@@ -38,11 +38,28 @@ class DB():
             raise ValueError("Connection to database failed")
 
 
-    def create_table():
+    def create_tables():
         cur.execute("""CREATE TABLE IF NOT EXISTS users (
                          id serial PRIMARY KEY,
                          name VARCHAR(255),
                          value BOOL DEFAULT false
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS restaurants (
+                         restaurant_id serial PRIMARY KEY,
+                         name VARCHAR(255),
+                         address VARCHAR(255),
+                         stars DECIMAL(3, 2) DEFAULT 0,
+                         description TEXT
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS dishes (
+                         dish_id serial PRIMARY KEY,
+                         restaurant_id INT NOT NULL REFERENCES restaurants,
+                         name VARCHAR(255),
+                         price FLOAT NOT NULL,
+                         available BOOL DEFAULT true,
+                         description TEXT
                          )""")
         conn.commit()
 
