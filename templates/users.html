@@ -8,12 +8,14 @@
                 <td>Name</td>
                 <td>ID</td>
                 <td>Value</td>
+                <td>Link</td>
             </tr>
             {% for user in users %}
             <tr>
                 <td>{{ user.name }}</td>
                 <td>{{ user.user_id }}</td>
                 <td>{{ user.value }}</td>
+                <td><a href={{ url_for('get_user', user_id=user.user_id) }}>ссылка</a></td>
             </tr>
             {% endfor %}
         </table>

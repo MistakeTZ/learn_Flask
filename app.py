@@ -1,9 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from database.model import DB
 
 app = Flask(__name__)
 
 @app.route('/')
+def index():
+    return "index"
+
+
 @app.route('/hello')
 def hello_world():
     return "Hello, world!"

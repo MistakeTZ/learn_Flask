@@ -1,15 +1,17 @@
 import psycopg2
 from psycopg2.extensions import connection, cursor
+from psycopg2.extras import RealDictCursor
 from os import getenv
 
 conn: connection
 cur: cursor
+dict_cur: cursor
 
 
 class DB():
     
     def load_database(dbname = "", user = "", password = "", host = "", port=0):
-        global conn, cur
+        global conn, cur, dict_cur
 
         if not dbname:
             dbname = getenv("dbname")
@@ -27,6 +29,7 @@ class DB():
         except Exception as e:
             raise ValueError("Cannot connect to database.\nException:\n{}".format(e))
         cur = conn.cursor()
+        dict_cur = conn.cursor(cursor_factory=RealDictCursor)
 
         try:
             cur.execute("SELECT version()")
@@ -54,6 +57,14 @@ class DB():
             return cur.fetchone()
         else:
             return cur.fetchall()
+        
+
+    def get_dict(prompt, values=None, one=False):
+        dict_cur.execute(prompt, values)
+        if one:
+            return dict(dict_cur.fetchone())
+        else:
+            return [dict(res) for res in dict_cur.fetchall()]
         
 
     def commit(prompt, values=None):
