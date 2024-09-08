@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Hello, {{ user.username }}!</h1>
+
+<h1>
+    {% if user.username %}
+    Hello, {{ user.username }}!
+    {% else %}
+    Hello!
+    {% endif %}
+</h1>
 
 {% for post in posts %}
 <span>

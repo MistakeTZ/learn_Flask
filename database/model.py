@@ -71,7 +71,7 @@ class DB():
         
         cur.execute("""CREATE TABLE IF NOT EXISTS posts (
                          post_id serial PRIMARY KEY,
-                         user_id INT NOT NULL REFERENCES restaurants,
+                         user_id INT NOT NULL REFERENCES user_info,
                          body VARCHAR(255),
                          timestamp TIMESTAMP
                          )""")

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, request, flash, redirect, jsonify, Response
+from werkzeug.security import generate_password_hash
 from social.forms import LoginForm
 import json
 from database.model import DB
@@ -13,17 +14,15 @@ def index():
     if "username" in request.args:
         user = {'username': request.args["username"]}
     else:
-        user = {'username': "unregistered user"}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
+        user = {'username': ""}
+    
+    raw_posts = DB.get("select user_id, body, timestamp from posts ORDER BY timestamp desc limit 15")
+
+    posts = [{
+                "author": {"username": DB.get("select username from user_info where user_id=%s", [post[0]], one=True)[0]},
+                "body": post[1]} 
+                for post in raw_posts]
+
     return render_template('home_page.html', title='Home', user=user, posts=posts)
 
 
@@ -33,6 +32,7 @@ def login_page():
 
     if request.method == "POST":
         if form.validate_on_submit():
+            
             flash('Login requested for user {}, remember_me={}'.format(
                 form.username.data, form.remember_me.data))
             return redirect('/index')
