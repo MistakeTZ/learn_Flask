@@ -12,8 +12,8 @@ def index():
     if "username" in request.args:
         user = {'username': request.args["username"]}
     else:
-        user = {'username': "Oleg"}
-    return render_template('restaurants.html', title='Home', user=user)
+        user = {'username': "Semen"}
+    return render_template('restaurants/restaurants.html', title='Home', user=user)
 
 
 @app.route('/hello', methods = ['GET'])
