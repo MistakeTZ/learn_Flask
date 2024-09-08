@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, request, flash, redirect, jsonify, Response
+from forms import LoginForm
 import json
 from database.model import DB
 from os import getenv
@@ -16,22 +17,16 @@ def index():
     return render_template('restaurants/restaurants.html', title='Home', user=user)
 
 
-@app.route('/hello', methods = ['GET'])
-def api_hello():
-    data = {
-        'hello'  : 'world',
-        'number' : 3
-    }
-    js = json.dumps(data)
-
-    resp = Response(js, status=200, mimetype='application/json')
-    resp.headers['Link'] = 'http://luisrei.com'
-
-    return resp
+@app.route('/login')
+def login_page():
+    form = LoginForm()
+    return render_template('restaurants/login.html', title='Sign In', form=form)
 
     
 # Run server
 def run_server(host = "0.0.0.0", port = 5000):
-    app.secret_key = getenv("app_secret_key")
+    from config import Config
+    app.config.from_object(Config)
+
     app.debug = True
     app.run(host=host, port=port)
