@@ -2,10 +2,12 @@ from dotenv import load_dotenv
 from os import getenv
 from database.model import DB
 import users_app
-import restaurants_app
+import social.app as social_app
 
 
 def main():
+    print("Starting app...")
+
     # Загрузка файлов окружения
     load_dotenv()
 
@@ -18,7 +20,7 @@ def main():
     # print(DB.select(1))
 
     # Запуск сервера
-    restaurants_app.run_server()
+    social_app.run_server()
 
     # Выгрузка базы данных
     DB.unload_database()
