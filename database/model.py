@@ -62,13 +62,18 @@ class DB():
                          description TEXT
                          )""")
         
-        cur.execute("""CREATE TABLE IF NOT EXISTS users (
-                         dish_id serial PRIMARY KEY,
-                         restaurant_id INT NOT NULL REFERENCES restaurants,
-                         name VARCHAR(255),
-                         price FLOAT NOT NULL,
-                         available BOOL DEFAULT true,
-                         description TEXT
+        cur.execute("""CREATE TABLE IF NOT EXISTS user_info (
+                         user_id serial PRIMARY KEY,
+                         username VARCHAR(63),
+                         email VARCHAR(127),
+                         password_hash VARCHAR(127)
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS posts (
+                         post_id serial PRIMARY KEY,
+                         user_id INT NOT NULL REFERENCES restaurants,
+                         body VARCHAR(255),
+                         timestamp TIMESTAMP
                          )""")
         conn.commit()
 
