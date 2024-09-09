@@ -3,7 +3,7 @@ from os import getenv
 from datetime import datetime, timezone
 from database.model import DB
 import users_app
-import social.app as social_app
+import social as social_app
 
 
 def main():

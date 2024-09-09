@@ -28,6 +28,8 @@ class DB():
             conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         except Exception as e:
             raise ValueError("Cannot connect to database.\nException:\n{}".format(e))
+        
+        conn.set_session(autocommit=True)
         cur = conn.cursor()
         dict_cur = conn.cursor(cursor_factory=RealDictCursor)
 
@@ -66,7 +68,7 @@ class DB():
                          user_id serial PRIMARY KEY,
                          username VARCHAR(63),
                          email VARCHAR(127),
-                         password_hash VARCHAR(127)
+                         password_hash VARCHAR(255)
                          )""")
         
         cur.execute("""CREATE TABLE IF NOT EXISTS posts (
@@ -109,7 +111,6 @@ class DB():
     def commit(prompt, values=None):
         try:
             cur.execute(prompt, values)
-            conn.commit()
             return True
         except Exception as e:
             print(e)
