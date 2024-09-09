@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Default page
 @app.route('/')
 def index():
-    return "index"
+    return redirect(url_for("get_users"))
 
 
 # Hello page
@@ -21,7 +21,7 @@ def hello_world():
 def get_users():
     all_users = DB.get("select * from users")
     users = [{"name": user[1], "user_id": user[0], "value": user[2]} for user in all_users]
-    return render_template('users.html', users=users)
+    return render_template('users/users.html', users=users)
 
 
 # Send json data of all users
@@ -34,7 +34,7 @@ def get_users_JSON():
 # Render new_user template
 @app.route('/new_user')
 def new_user():
-    return render_template('new_user.html')
+    return render_template('users/new_user.html')
 
 
 # Add new user
@@ -76,7 +76,7 @@ def delete_user(user_id):
 def get_user(user_id):
     user = DB.select(user_id)
     if user:
-        return render_template('user.html', name=user[1], user_id=user[0], value=user[2])
+        return render_template('users/user.html', name=user[1], user_id=user[0], value=user[2])
     return f"User {user_id} not found"
 
 

@@ -28,6 +28,8 @@ class DB():
             conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         except Exception as e:
             raise ValueError("Cannot connect to database.\nException:\n{}".format(e))
+        
+        conn.set_session(autocommit=True)
         cur = conn.cursor()
         dict_cur = conn.cursor(cursor_factory=RealDictCursor)
 
@@ -38,11 +40,42 @@ class DB():
             raise ValueError("Connection to database failed")
 
 
-    def create_table():
+    def create_tables():
         cur.execute("""CREATE TABLE IF NOT EXISTS users (
                          id serial PRIMARY KEY,
                          name VARCHAR(255),
                          value BOOL DEFAULT false
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS restaurants (
+                         restaurant_id serial PRIMARY KEY,
+                         name VARCHAR(255),
+                         address VARCHAR(255),
+                         stars DECIMAL(3, 2) DEFAULT 0,
+                         description TEXT
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS dishes (
+                         dish_id serial PRIMARY KEY,
+                         restaurant_id INT NOT NULL REFERENCES restaurants,
+                         name VARCHAR(255),
+                         price FLOAT NOT NULL,
+                         available BOOL DEFAULT true,
+                         description TEXT
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS user_info (
+                         user_id serial PRIMARY KEY,
+                         username VARCHAR(63),
+                         email VARCHAR(127),
+                         password_hash VARCHAR(255)
+                         )""")
+        
+        cur.execute("""CREATE TABLE IF NOT EXISTS posts (
+                         post_id serial PRIMARY KEY,
+                         user_id INT NOT NULL REFERENCES user_info,
+                         body VARCHAR(255),
+                         timestamp TIMESTAMP
                          )""")
         conn.commit()
 
@@ -78,7 +111,6 @@ class DB():
     def commit(prompt, values=None):
         try:
             cur.execute(prompt, values)
-            conn.commit()
             return True
         except Exception as e:
             print(e)

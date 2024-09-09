@@ -1,23 +1,27 @@
 from dotenv import load_dotenv
 from os import getenv
+from datetime import datetime, timezone
 from database.model import DB
-from users_app import run_server
+import users_app
+import social as social_app
 
 
 def main():
+    print("Starting app...")
+
     # Загрузка файлов окружения
     load_dotenv()
 
     # Загрузка базы данных
     DB.load_database()
-    DB.create_table()
+    DB.create_tables()
 
-    # DB.commit("INSERT INTO users (name, value) VALUES (%s, %s)", ["Alex", False])
-    # print(DB.get("SELECT * FROM users"))
+    # DB.commit("INSERT INTO posts (user_id, body, timestamp) VALUES (%s, %s, %s)", [1, "I still here)", datetime.now(timezone.utc)])
+    # print(DB.get_dict("SELECT * FROM posts"))
     # print(DB.select(1))
 
     # Запуск сервера
-    run_server()
+    social_app.run_server()
 
     # Выгрузка базы данных
     DB.unload_database()
